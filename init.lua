@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -100,6 +100,7 @@ vim.g.have_nerd_font = false
 
 -- Make line numbers default
 vim.opt.number = true
+vim.opt.relativenumber = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
@@ -174,6 +175,11 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+--
+vim.keymap.set('n', '|', ':vsplit<CR>', { desc = 'Verical Split' })
+vim.keymap.set('n', '-', ':split<CR>', { desc = 'Horizontal Split' })
+
+vim.keymap.set('n', '<leader>-', 'V%zf', { desc = 'Fold Here' })
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -239,6 +245,14 @@ require('lazy').setup({
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
+  {
+    'altermo/ultimate-autopair.nvim',
+    event = { 'InsertEnter', 'CmdlineEnter' },
+    branch = 'v0.6', --recommended as each new version will have breaking changes
+    opts = {
+      --Config goes here
+    },
+  },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -286,8 +300,46 @@ require('lazy').setup({
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+        ['<leader>h'] = { name = '[H]arpoon', _ = 'which_key_ignore' },
       }
     end,
+  },
+  {
+    'ThePrimeagen/harpoon',
+    config = function()
+      local mark = require 'harpoon.mark'
+      local ui = require 'harpoon.ui'
+      vim.keymap.set('n', '<Leader>ha', mark.add_file, { desc = 'Haproon Add Current File' })
+      vim.keymap.set('n', '<c-a>', mark.add_file, { desc = 'Haproon Add Current File' })
+      vim.keymap.set('n', '<c-y>', ui.toggle_quick_menu, { desc = 'Harpoon Toggle Quick Menu' })
+      vim.keymap.set('n', '<Leader>hh', ui.toggle_quick_menu, { desc = 'Harpoon Toggle Quick Menu' })
+
+      vim.keymap.set('n', '<Space>hn', function()
+        ui.nav_next()
+      end, { desc = 'Haproon go to next' })
+      vim.keymap.set('n', '<Space>hp', function()
+        ui.nav_prev()
+      end, { desc = 'Harpoon go to prevous' })
+    end,
+  },
+  {
+    'kdheepak/lazygit.nvim',
+    cmd = {
+      'LazyGit',
+      'LazyGitConfig',
+      'LazyGitCurrentFile',
+      'LazyGitFilter',
+      'LazyGitFilterCurrentFile',
+    },
+    -- optional for floating window border decoration
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+    -- setting the keybinding for LazyGit with 'keys' is recommended in
+    -- order to load the plugin when the command is run for the first time
+    keys = {
+      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+    },
   },
 
   -- NOTE: Plugins can specify dependencies.
@@ -402,6 +454,28 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'nvim-tree/nvim-tree.lua',
+    config = function()
+      require('nvim-tree').setup {
+        sort = {
+          sorter = 'case_sensitive',
+        },
+        view = {
+          width = 45,
+        },
+        renderer = {
+          group_empty = true,
+        },
+        filters = {
+          dotfiles = true,
+        },
+        use_icons = true,
+      }
+      local api = require 'nvim-tree.api'
+      vim.keymap.set('n', '<leader>e', api.tree.toggle, { desc = 'Toggle the file explorer' })
+    end,
+  },
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -600,17 +674,17 @@ require('lazy').setup({
 
   { -- Autoformat
     'stevearc/conform.nvim',
-    lazy = false,
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format { async = true, lsp_fallback = true }
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
+    --   lazy = false,
+    --   keys = {
+    --     {
+    --       '<leader>f',
+    --       function()
+    --         require('conform').format { async = true, lsp_fallback = true }
+    --       end,
+    --       mode = '',
+    --       desc = '[F]ormat buffer',
+    --     },
+    --   },
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
@@ -691,6 +765,7 @@ require('lazy').setup({
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
           -- Select the [n]ext item
+          ['<Tab>'] = cmp.mapping.select_next_item(),
           ['<C-n>'] = cmp.mapping.select_next_item(),
           -- Select the [p]revious item
           ['<C-p>'] = cmp.mapping.select_prev_item(),
@@ -702,7 +777,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<Enter>'] = cmp.mapping.confirm { select = true },
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
