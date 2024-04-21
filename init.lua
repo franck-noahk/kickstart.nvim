@@ -470,7 +470,6 @@ require('lazy').setup({
         filters = {
           dotfiles = true,
         },
-        use_icons = true,
       }
       local api = require 'nvim-tree.api'
       vim.keymap.set('n', '<leader>e', api.tree.toggle, { desc = 'Toggle the file explorer' })
