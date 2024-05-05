@@ -18,4 +18,7 @@ return {
       require('lualine').setup { theme = 'material' }
     end,
   },
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+  },
 }
