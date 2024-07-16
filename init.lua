@@ -157,6 +157,8 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 20
 
 vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -164,6 +166,9 @@ vim.opt.tabstop = 2
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+-- Set Ctrl z to decrement WINDOWS Terminal
+vim.keymap.set('n', '<C-z>', '<C-a>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
@@ -198,6 +203,13 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- Quick list
+
+vim.keymap.set('n', '<leader>dn', ':cn<cr>', { desc = '[D]ocument quickfix list [N]ext' })
+vim.keymap.set('n', '<leader>dp', ':cp<cr>', { desc = '[D]ocument quickfix list [P]rev' })
+vim.keymap.set('n', '<leader>dd', ':copen<cr>', { desc = '[D]ocument quickfix list open' })
+vim.keymap.set('n', '<leader>dc', ':ccl<cr>', { desc = '[D]ocument quickfix list close' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -312,19 +324,41 @@ require('lazy').setup({
     config = function()
       local mark = require 'harpoon.mark'
       local ui = require 'harpoon.ui'
+      local term = require 'harpoon.term'
       vim.keymap.set('n', '<Leader>ha', mark.add_file, { desc = 'Haproon Add Current File' })
       vim.keymap.set('n', '<c-a>', mark.add_file, { desc = 'Haproon Add Current File' })
       vim.keymap.set('n', '<c-y>', ui.toggle_quick_menu, { desc = 'Harpoon Toggle Quick Menu' })
       vim.keymap.set('n', '<Leader>hh', ui.toggle_quick_menu, { desc = 'Harpoon Toggle Quick Menu' })
+      vim.keymap.set('n', '<Leader>ht', function()
+        term.gotoTerminal(1)
+      end, { desc = 'go to terminal' })
       require('harpoon').setup { menu = {
         width = vim.api.nvim_win_get_width(0) - 75,
       } }
 
-      vim.keymap.set('n', '<Space>hn', function()
-        ui.nav_next()
-      end, { desc = 'Haproon go to next' })
+      vim.keymap.set('n', '<Space>h1', function()
+        ui.nav_file(1)
+      end, { desc = 'Haproon go 1' })
+      vim.keymap.set('n', '<Space>h2', function()
+        ui.nav_file(2)
+      end, { desc = 'Haproon go 2' })
+      vim.keymap.set('n', '<Space>h3', function()
+        ui.nav_file(3)
+      end, { desc = 'harpoon go 3' })
+      vim.keymap.set('n', '<Space>h4', function()
+        ui.nav_file(4)
+      end, { desc = 'harpoon go 4' })
+      vim.keymap.set('n', '<Space>h5', function()
+        ui.nav_file(5)
+      end, { desc = 'harpoon go 5' })
+      vim.keymap.set('n', '<Space>h6', function()
+        ui.nav_file(6)
+      end, { desc = 'harpoon go 6' })
       vim.keymap.set('n', '<Space>hp', function()
         ui.nav_prev()
+      end, { desc = 'Harpoon go to prevous' })
+      vim.keymap.set('n', '<Space>hn', function()
+        ui.nav_next()
       end, { desc = 'Harpoon go to prevous' })
     end,
   },
@@ -383,7 +417,7 @@ require('lazy').setup({
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
       -- many different aspects of Neovim, your workspace, LSP, and more!
-      --
+
       -- The easiest way to use Telescope, is to start by doing something like:
       --  :Telescope help_tags
       --
@@ -460,27 +494,6 @@ require('lazy').setup({
     end,
   },
 
-  {
-    'nvim-tree/nvim-tree.lua',
-    config = function()
-      require('nvim-tree').setup {
-        sort = {
-          sorter = 'case_sensitive',
-        },
-        view = {
-          width = 45,
-        },
-        renderer = {
-          group_empty = true,
-        },
-        filters = {
-          dotfiles = true,
-        },
-      }
-      local api = require 'nvim-tree.api'
-      vim.keymap.set('n', '<leader>e', api.tree.toggle, { desc = 'Toggle the file explorer' })
-    end,
-  },
   {
     'neovim/nvim-lspconfig', -- LSP Configuration & Plugins
 
@@ -883,7 +896,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
