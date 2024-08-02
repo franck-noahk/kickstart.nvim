@@ -55,7 +55,7 @@ return {
 
         -- All the patterns used to detect root dir, when **"pattern"** is in
         -- detection_methods
-        patterns = { '.git', 'Makefile', 'package.json' },
+        patterns = { '.git' },
 
         -- Table of lsp clients to ignore by name
         -- eg: { "efm", ... }
@@ -115,5 +115,8 @@ return {
       local api = require 'nvim-tree.api'
       vim.keymap.set('n', '<leader>e', api.tree.toggle, { desc = 'Toggle the file explorer' })
     end,
+  },
+  {
+    'rhysd/vim-fixjson',
   },
 }
