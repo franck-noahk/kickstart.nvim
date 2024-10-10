@@ -204,6 +204,9 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+vim.keymap.set('n', '<C-K>', 'ddkkp', { desc = 'Move Line up' })
+vim.keymap.set('n', '<C-J>', 'ddp', { desc = 'Move Line down' })
+
 -- Quick list
 
 vim.keymap.set('n', '<leader>dn', ':cn<cr>', { desc = '[D]ocument quickfix list [N]ext' })
@@ -953,5 +956,6 @@ require('lazy').setup({
   },
 })
 
+vim.cmd.colorscheme 'nightfox'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
