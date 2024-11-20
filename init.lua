@@ -160,6 +160,9 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 
+-- Xaml
+vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, { pattern = { '*.xaml' }, command = 'setf xml' })
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -213,6 +216,7 @@ vim.keymap.set('n', '<leader>dn', ':cn<cr>', { desc = '[D]ocument quickfix list 
 vim.keymap.set('n', '<leader>dp', ':cp<cr>', { desc = '[D]ocument quickfix list [P]rev' })
 vim.keymap.set('n', '<leader>dd', ':copen<cr>', { desc = '[D]ocument quickfix list open' })
 vim.keymap.set('n', '<leader>dc', ':ccl<cr>', { desc = '[D]ocument quickfix list close' })
+vim.keymap.set('n', '<leader>dq', ':cexpr []<cr>', { desc = '[D]document [Q]uit quickfix list clear' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`

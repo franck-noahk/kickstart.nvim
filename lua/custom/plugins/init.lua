@@ -3,6 +3,13 @@
 --
 -- See the kickstart.nvim README for more information
 return {
+  --[[ { -- This is the part that shows the start up streen
+    'goolord/alpha-nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('alpha').setup(require('alpha.themes.startify').config)
+    end,
+  }, ]]
 
   {
     'nvim-lualine/lualine.nvim',
@@ -75,11 +82,11 @@ return {
         -- telescope
         -- lua
         require('nvim-tree').setup {
-          sync_root_with_cwd = false,
-          respect_buf_cwd = false,
+          sync_root_with_cwd = true,
+          respect_buf_cwd = true,
           update_focused_file = {
             enable = true,
-            update_root = false,
+            update_root = true,
           },
         },
         datapath = vim.fn.stdpath 'data',
@@ -87,27 +94,6 @@ return {
       require('telescope').load_extension 'projects'
     end,
     vim.keymap.set('n', '<leader>p', ':Telescope projects<cr>', { desc = 'Show [P]rojects' }),
-  },
-  {
-    'nvim-tree/nvim-tree.lua',
-    config = function()
-      require('nvim-tree').setup {
-        sort = {
-          sorter = 'case_sensitive',
-        },
-        view = {
-          width = 45,
-        },
-        renderer = {
-          group_empty = true,
-        },
-        filters = {
-          dotfiles = true,
-        },
-      }
-      local api = require 'nvim-tree.api'
-      vim.keymap.set('n', '<leader>e', api.tree.toggle, { desc = 'Toggle the file explorer' })
-    end,
   },
   {
     'rhysd/vim-fixjson',
